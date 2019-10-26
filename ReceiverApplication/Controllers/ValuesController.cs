@@ -2,33 +2,18 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using MassTransit;
 using Microsoft.AspNetCore.Mvc;
 
-namespace SenderApplication.Controllers
+namespace ReceiverApplication.Controllers
 {
-
     [Route("api/[controller]")]
     [ApiController]
     public class ValuesController : ControllerBase
     {
-        //private readonly IBus _bus;
-
-        //public ValuesController(IBus bus)
-        //{
-        //    _bus = bus;
-        //}
-
         // GET api/values
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<string>>> Get()
+        public ActionResult<IEnumerable<string>> Get()
         {
-            //await _bus.Publish<Message>(
-            //  new
-            //  {
-            //      Value = "123"
-            //  });
-
             return new string[] { "value1", "value2" };
         }
 
@@ -55,7 +40,6 @@ namespace SenderApplication.Controllers
         [HttpDelete("{id}")]
         public void Delete(int id)
         {
-
         }
     }
 }
