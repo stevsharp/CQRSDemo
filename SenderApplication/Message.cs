@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -22,6 +23,16 @@ namespace SenderApplication
     {
         public string FirstName { get; set; }
         public int Age { get; set; }
+    }
+
+    public class CreatePersonValidator : AbstractValidator<CreatePerson>
+    {
+        public CreatePersonValidator()
+        {
+            RuleFor(x => x.Age).NotEmpty();
+
+            RuleFor(x => x.FirstName).NotEmpty();
+        }
     }
 
     public class UpdatePerson : IRequest<Person>
