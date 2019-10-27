@@ -32,6 +32,7 @@ namespace SenderApplication
             services.AddMvc(options =>
             {
                 options.Filters.Add(typeof(ValidatorActionFilter));
+                options.Filters.Add(typeof(ErrorHandlerMiddleware.ExceptionFilter));
                 options.EnableEndpointRouting = false;
             })
             .AddJsonOptions(options =>
@@ -88,6 +89,9 @@ namespace SenderApplication
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            app.UseMiddleware<ErrorHandlerMiddleware>();
+            app.UseCors("Cors");
 
             app.UseMvc();
 

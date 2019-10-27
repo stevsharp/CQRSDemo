@@ -3,10 +3,26 @@ using System.Threading;
 using System.Threading.Tasks;
 using MassTransit;
 using MediatR;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using static SenderApplication.ErrorHandlerMiddleware;
 
 namespace SenderApplication.Controllers
 {
+    //public abstract class BaseHandler
+    //{
+    //    protected IActionResult OkOrBadRequest(BusinessResult businessResult)
+    //    {
+    //        if (!businessResult.IsSuccess())
+    //            return BadRequestSerialized(businessResult);
+
+    //        return Ok();
+    //    }
+
+    //    private IActionResult BadRequestSerialized(BusinessResult businessResult) =>
+    //           BadRequest(new ErrorResponse(businessResult.BrokenRules.Select(x => x.Rule)));
+    //}
+
     public class PersonHandler : 
           IRequestHandler<CreatePerson, Person>
         , IRequestHandler<UpdatePerson, Person>
@@ -33,7 +49,7 @@ namespace SenderApplication.Controllers
             ctx.Add(person);
             await ctx.SaveChangesAsync();
 
-            await _bus.Publish<Message>(new { Value = person.Id.ToString() });
+            ///await _bus.Publish<Message>(new { Value = person.Id.ToString() });
 
             return person;
         }
@@ -42,14 +58,14 @@ namespace SenderApplication.Controllers
         {
             var person = await ctx.Persons.SingleOrDefaultAsync(v => v.Id == request.Id);
             if (person == null)
-                throw new Exception("Record does not exist");
+                throw new ApiException("Record does not exist");
 
             person.Age = request.Age;
             person.FirstName = request.FirstName;
             ctx.Persons.Update(person);
             await ctx.SaveChangesAsync();
 
-            await _bus.Publish<Message>(new { Value = person.Id.ToString() });
+            // await _bus.Publish<Message>(new { Value = person.Id.ToString() });
 
             return person;
         }
@@ -63,7 +79,7 @@ namespace SenderApplication.Controllers
             ctx.Persons.Remove(person);
             await ctx.SaveChangesAsync();
 
-            await _bus.Publish<Message>(new { Value = person.Id.ToString() });
+            // await _bus.Publish<Message>(new { Value = person.Id.ToString() });
 
             return Unit.Value;
         }
