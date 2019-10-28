@@ -6,6 +6,7 @@ using MassTransit;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -15,10 +16,21 @@ namespace SenderApplication
 {
     public class SendMessageConsumer : IConsumer<Message>
     {
-        public Task Consume(ConsumeContext<Message> context)
+
+        private IHubContext<SenderHub> _hub;
+
+        public SendMessageConsumer(IHubContext<SenderHub> hub)
+        {
+            _hub = hub;
+        }
+
+        public async Task Consume(ConsumeContext<Message> context)
         {
             Console.WriteLine($"Receive message value: {context.Message.Value}");
-            return Task.CompletedTask;
+
+            await _hub.Clients.All.SendAsync($"Receive message value: {context.Message.Value}");
+
+            // return Task.CompletedTask;
         }
     }
 }
